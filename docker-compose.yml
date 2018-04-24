@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  intrawebapi:
+    image: intrawebapi
+    build:
+      context: .
+      dockerfile: IntraWebApi/Dockerfile
