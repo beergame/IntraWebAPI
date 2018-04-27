@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using IntraWebApi.Services.UserService.Model;
+﻿using System.Threading.Tasks;
+using IntraWebApi.Services.TokenProvider;
 
 namespace IntraWebApi.Services.UserService
 {
     public interface IUserService
     {
-        void Create(UserModel user);
-        string GetUser(string username, string password);
-        void Update(UserModel user);
+        Task Create(string civility, string firstname, string lastname, string username, string password);
+        Task<Token> Authenticate(string username, string password);
+        Task Update(string username, string firstname = null, string lastname = null, string password = null);
     }
 }

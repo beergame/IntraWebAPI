@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
 
-namespace IntraWebApi.Data.Models
+namespace IntraWebApi.Data.Context
 {
     public class UserContext : DbContext
     {

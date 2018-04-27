@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using IntraWebApi.Data.Models;
+using IntraWebApi.Data.Context;
+using IntraWebApi.Data.Repositories;
+using IntraWebApi.Services.TokenProvider;
+using IntraWebApi.Services.UserService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IntraWebApi
 {
@@ -28,8 +33,14 @@ namespace IntraWebApi
             services.AddMvc();
 
             var connection = @"Server=(localdb)\mssqllocaldb;Database=IntraDB;Trusted_Connection=True;ConnectRetryCount=0";
+
             services.AddDbContext<UserContext>(options => options.UseSqlServer(connection));
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IUserRepository, UserRepository>();
+
         }
+
+       
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -38,7 +49,6 @@ namespace IntraWebApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseMvc();
         }
     }

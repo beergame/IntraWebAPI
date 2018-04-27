@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IntraWebApi.Services.UserService.Model
+namespace IntraWebApi.Data.Models
 {
-    public class UserModel
+    public class UserRegister
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

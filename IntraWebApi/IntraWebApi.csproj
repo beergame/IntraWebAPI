@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -21,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IntraWebApi.Data\IntraWebApi.Data.csproj" />
+    <ProjectReference Include="..\IntraWebApi.Services\IntraWebApi.Services.csproj" />
   </ItemGroup>
 
 </Project>
