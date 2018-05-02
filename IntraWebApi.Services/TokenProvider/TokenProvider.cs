@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -18,7 +20,7 @@ namespace IntraWebApi.Services.TokenProvider
             ThrowIfInvalidOptions(_options);
         }
 
-        public async Task<Token> GenerateToken(string username, string password)
+        public async Task<Token> GenerateTokenAsync(int userId, string username, string role)
         {
             var now = DateTime.UtcNow;
 
@@ -27,7 +29,9 @@ namespace IntraWebApi.Services.TokenProvider
             {
                 new Claim("sub", username),
                 new Claim("jti", await _options.NonceGenerator()),
-                new Claim("iat", ToUnixEpochDate(now).ToString(), ClaimValueTypes.Integer64)
+                new Claim("iat", ToUnixEpochDate(now).ToString(), ClaimValueTypes.Integer64),
+                new Claim(ClaimTypes.Role, role),
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString())
             };
 
             // Create the JWT and write it to a string
@@ -49,6 +53,15 @@ namespace IntraWebApi.Services.TokenProvider
             };
 
             return response;
+        }
+
+        public Dictionary<string, string> DecodeToken(string accessToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(accessToken);
+            var userId = token.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
+            var role = token.Claims.First(claim => claim.Type == ClaimTypes.Role).Value;
+            return new Dictionary<string, string>{{userId, role}};
         }
 
         private static void ThrowIfInvalidOptions(TokenProviderOptions options)

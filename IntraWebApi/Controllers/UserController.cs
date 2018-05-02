@@ -28,10 +28,10 @@ namespace IntraWebApi.Controllers
                 return BadRequest();
             }
 
-            await _userService.Create(userRegister.Civility, userRegister.FirstName, userRegister.LastName,
+            var result = await _userService.Create(userRegister.Civility, userRegister.FirstName, userRegister.LastName,
                 userRegister.Username, userRegister.Password);
 
-            return StatusCode(201);
+            return StatusCode(201, result);
         }
 
         [HttpPost("authenticate")]
@@ -40,6 +40,25 @@ namespace IntraWebApi.Controllers
             if (string.IsNullOrEmpty(userToAuthenticate.Username) || string.IsNullOrEmpty(userToAuthenticate.Password))
                 return BadRequest("Username and password required.");
             var result = await _userService.Authenticate(userToAuthenticate.Username, userToAuthenticate.Password);
+            return Ok(result);
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> Update([FromBody] Update userToUpdate)
+        {
+            var headers = Request.Headers;
+            string accessToken = null;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var tokenIsFound = headers.TryGetValue("access_token", out var values);
+            if (tokenIsFound)
+                accessToken = values.FirstOrDefault();
+                
+            var result = await _userService.UpdateAsync(accessToken, userToUpdate.FirstName,
+                userToUpdate.LastName, userToUpdate.Password);
             return Ok(result);
         }
     }

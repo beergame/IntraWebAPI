@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,14 +18,16 @@ namespace IntraWebApi.Services.UserService
     {
         private readonly IUserRepository _userRepository;
         private readonly TokenProvider.TokenProvider _tokenProvider;
-        private static readonly string _secretKey = "mysupersecret_secretkey!123";
+        private const string SecretKey = "mysupersecret_secretkey!123";
+        private const string UserRole = "user";
+        private const string AdminRole = "admin";
 
-        private static readonly SymmetricSecurityKey signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_secretKey));
+        private static readonly SymmetricSecurityKey SigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
         private readonly TokenProviderOptions _option = new TokenProviderOptions
         {
             Audience = "ExampleAudience",
             Issuer = "ExampleIssuer",
-            SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
+            SigningCredentials = new SigningCredentials(SigningKey, SecurityAlgorithms.HmacSha256),
         };
 
         public UserService(IUserRepository userRepository)
@@ -35,20 +38,10 @@ namespace IntraWebApi.Services.UserService
 
         private string HashPassword(string password)
         {
-            byte[] salt = new byte[128 / 8];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
-
-            var hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA1,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8));
-
-            return hashed;
+            var provider = new SHA1CryptoServiceProvider();
+            var encoding = new UnicodeEncoding();
+            var encrypted = provider.ComputeHash(encoding.GetBytes(password));
+            return Convert.ToBase64String(encrypted);
         }
 
         private async Task<User> GetUser(string username, string password)
@@ -57,8 +50,13 @@ namespace IntraWebApi.Services.UserService
             return await _userRepository.GetUserAsync(username, hashedPassword);
         }
 
+        private async Task<UserCredentials> GetUserCredentials(int userId)
+        {
+            return await _userRepository.GetUserCredentialsAsync(userId);
+        }
 
-        public async Task Create(string civility, string firstname, string lastname, string username, string password)
+
+        public async Task<string> Create(string civility, string firstname, string lastname, string username, string password)
         {
             var hashedPassword = HashPassword(password);
             var user = new UserRegister
@@ -69,20 +67,33 @@ namespace IntraWebApi.Services.UserService
                 Username = username,
                 PassWord = hashedPassword
             };
-            await _userRepository.CreateUserAsync(user);
+           return await _userRepository.CreateUserAsync(user);
         }
 
-        public Task Update(string username, string firstname = null, string lastname = null, string password = null)
+        public async Task<string> UpdateAsync(string accessToken, string firstname = null, string lastname = null, string password = null)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(accessToken)) return null;
+
+            var tokenDecoded = _tokenProvider.DecodeToken(accessToken);
+            var userIdFromDictionary = tokenDecoded.Select(x => x.Key).First();
+            int.TryParse(userIdFromDictionary, out var userId);
+
+            if (string.IsNullOrEmpty(password))
+                return await _userRepository.UpdateUserAsync(userId, firstname, lastname, password);
+
+            var hashedPassword = HashPassword(password);
+            return await _userRepository.UpdateUserAsync(userId, firstname, lastname, hashedPassword);
         }
 
         public async Task<Token> Authenticate(string username, string password)
         {
             var user = GetUser(username, password).Result;
-            if (user != null)
-                return await _tokenProvider.GenerateToken(username, password);
-            return null;
+            var userCredentials = GetUserCredentials(user.Id).Result;
+            var role = UserRole;
+            if (userCredentials.IsAdmin)
+                role = AdminRole;
+
+            return await _tokenProvider.GenerateTokenAsync(user.Id, userCredentials.Username, role);
         }
     }
 }
