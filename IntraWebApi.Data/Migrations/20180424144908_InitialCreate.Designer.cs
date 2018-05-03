@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace IntraWebApi.Data.Migrations
 {
-    [DbContext(typeof(UserContext))]
+    [DbContext(typeof(Context.Context))]
     [Migration("20180424144908_InitialCreate")]
     partial class InitialCreate
     {

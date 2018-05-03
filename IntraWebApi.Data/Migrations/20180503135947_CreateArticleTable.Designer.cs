@@ -11,9 +11,10 @@ using System;
 namespace IntraWebApi.Data.Migrations
 {
     [DbContext(typeof(Context.Context))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20180503135947_CreateArticleTable")]
+    partial class CreateArticleTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
