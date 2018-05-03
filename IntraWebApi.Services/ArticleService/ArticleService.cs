@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IntraWebApi.Data.Context;
+using IntraWebApi.Data.Models;
 using IntraWebApi.Data.Repositories;
 using IntraWebApi.Services.TokenProvider;
 using Microsoft.Extensions.Options;
@@ -41,20 +42,20 @@ namespace IntraWebApi.Services.ArticleService
             return articleId;
         }
 
-        public async Task<string> DeleteArticleAsync(int articleId, string accessToken)
+        public async Task<SystemResponse> DeleteArticleAsync(int articleId, string accessToken)
         {
             if (string.IsNullOrEmpty(accessToken))
-                return null;
+                return SystemResponse.AccessDenied;
 
             var userId = GetUserId(accessToken);
             var result = await _articleRepository.DeleteAsync(articleId, userId);
             return result;
         }
 
-        public async Task<string> UpdateArticleAsync(int articleId, string accessToken, string title = null, string content = null, byte[] picture = null)
+        public async Task<SystemResponse> UpdateArticleAsync(int articleId, string accessToken, string title = null, string content = null, byte[] picture = null)
         {
             if (string.IsNullOrEmpty(accessToken))
-                return null;
+                return SystemResponse.AccessDenied;
 
             var userId = GetUserId(accessToken);
             var result = await _articleRepository.UpdateAsync(articleId, userId, title, content, picture);

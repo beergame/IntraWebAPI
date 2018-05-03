@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IntraWebApi.Data.Models;
 using IntraWebApi.Models;
 using IntraWebApi.Services.ArticleService;
 using Microsoft.AspNetCore.Http;
@@ -42,7 +43,15 @@ namespace IntraWebApi.Controllers
             var accessToken = GetAccessTokenFormHeaders();
             var result = await _articleService.UpdateArticleAsync(articleUpdate.Id, accessToken, articleUpdate.Title,
                 articleUpdate.Content, articleUpdate.Picture);
-            return Ok(result);
+            switch (result)
+            {
+                case SystemResponse.AccessDenied:
+                    return StatusCode(401);
+                case SystemResponse.NotFound:
+                    return NotFound(articleUpdate);
+                default:
+                    return Ok();
+            }
         }
 
         [HttpDelete("delete")]
@@ -50,7 +59,15 @@ namespace IntraWebApi.Controllers
         {
             var accessToken = GetAccessTokenFormHeaders();
             var result = await _articleService.DeleteArticleAsync(articleId, accessToken);
-            return Ok(result);
+            switch (result)
+            {
+                case SystemResponse.AccessDenied:
+                    return StatusCode(401);
+                case SystemResponse.NotFound:
+                    return NotFound(articleId);
+                default:
+                    return Ok();
+            }
         }
 
         [HttpGet("getAll")]

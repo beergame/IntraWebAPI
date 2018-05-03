@@ -56,7 +56,7 @@ namespace IntraWebApi.Services.UserService
         }
 
 
-        public async Task<string> Create(string civility, string firstname, string lastname, string username, string password)
+        public async Task<SystemResponse> Create(string civility, string firstname, string lastname, string username, string password)
         {
             var hashedPassword = HashPassword(password);
             var user = new UserRegister
@@ -70,9 +70,9 @@ namespace IntraWebApi.Services.UserService
            return await _userRepository.CreateUserAsync(user);
         }
 
-        public async Task<string> UpdateAsync(string accessToken, string firstname = null, string lastname = null, string password = null)
+        public async Task<SystemResponse> UpdateAsync(string accessToken, string firstname = null, string lastname = null, string password = null)
         {
-            if (string.IsNullOrEmpty(accessToken)) return null;
+            if (string.IsNullOrEmpty(accessToken)) return SystemResponse.AccessDenied;
 
             var tokenDecoded = _tokenProvider.DecodeToken(accessToken);
             var userIdFromDictionary = tokenDecoded.Select(x => x.Key).First();

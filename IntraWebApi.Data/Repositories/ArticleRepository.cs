@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IntraWebApi.Data.Models;
 
 namespace IntraWebApi.Data.Repositories
 {
@@ -34,20 +35,20 @@ namespace IntraWebApi.Data.Repositories
             return newArticle.Id;
         }
 
-        public async Task<string> DeleteAsync(int articleId, int userId)
+        public async Task<SystemResponse> DeleteAsync(int articleId, int userId)
         {
             var userAccessRight = await _context.UserAccessRights.FirstOrDefaultAsync(u => u.UserId == userId);
             if (!userAccessRight.Delete)
-                return "You have not access right for delete this article";
+                return SystemResponse.AccessDenied;
 
             var article = _context.Articles.FirstOrDefault(a => a.Id == articleId);
             if (article == null)
-                return $"Article with {articleId} not found";
+                return SystemResponse.NotFound;
 
             _context.Articles.Remove(article);
             await _context.SaveChangesAsync();
 
-            return "Article deleted successfuly.";
+            return SystemResponse.Success;
         }
 
         public async Task<IEnumerable<Article>> GetAllArticlesAsync()
@@ -57,21 +58,21 @@ namespace IntraWebApi.Data.Repositories
             return  await articles.ToListAsync();
         }
 
-        public async Task<string> UpdateAsync(int articleId, int userId, string title = null, string content = null, byte[] picture = null)
+        public async Task<SystemResponse> UpdateAsync(int articleId, int userId, string title = null, string content = null, byte[] picture = null)
         {
             var userAccessRight = await _context.UserAccessRights.FirstOrDefaultAsync(u => u.UserId == userId);
             if (!userAccessRight.Write)
-                return "User has no access right for this action";
+                return SystemResponse.NotFound;
 
             var article = _context.Articles.FirstOrDefault(a => a.Id == articleId);
             if (article == null)
-                return $"Article with {articleId} not found";
+                return SystemResponse.NotFound;
 
             article.Title = string.IsNullOrEmpty(title) ? article.Title : title;
             article.Content = string.IsNullOrEmpty(content) ? article.Content : content;
             article.Picture = picture ?? article.Picture;
             await _context.SaveChangesAsync();
-            return $"Article {articleId} is updated successfuly.";
+            return SystemResponse.Success;
         }
     }
 }

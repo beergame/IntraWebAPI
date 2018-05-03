@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IntraWebApi.Data.Models;
 using IntraWebApi.Models;
 using IntraWebApi.Services.UserService;
 using Microsoft.AspNetCore.Http;
@@ -59,7 +60,15 @@ namespace IntraWebApi.Controllers
                 
             var result = await _userService.UpdateAsync(accessToken, userToUpdate.FirstName,
                 userToUpdate.LastName, userToUpdate.Password);
-            return Ok(result);
+            switch (result)
+            {
+                case SystemResponse.AccessDenied:
+                    return StatusCode(401);
+                case SystemResponse.NotFound:
+                    return NotFound(userToUpdate.FirstName);
+                default:
+                    return Ok();
+            }
         }
     }
 }

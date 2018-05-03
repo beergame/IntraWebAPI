@@ -16,7 +16,7 @@ namespace IntraWebApi.Data.Repositories
             _context = context;
         }
 
-        public async Task<string> CreateUserAsync(UserRegister user)
+        public async Task<SystemResponse> CreateUserAsync(UserRegister user)
         {
             var newUser = new User
             {
@@ -48,7 +48,7 @@ namespace IntraWebApi.Data.Repositories
             _context.UserAccessRights.Add(userDefaultAccessRight);
 
             await _context.SaveChangesAsync();
-            return $"User {user.Username} created successfuly.";
+            return SystemResponse.Success;
         }
 
         public async Task<User> GetUserAsync(string username, string password)
@@ -67,10 +67,10 @@ namespace IntraWebApi.Data.Repositories
             return await _context.UserCredentials.FirstOrDefaultAsync(uc => uc.UserId == userId);
         }
 
-        public async Task<string> UpdateUserAsync(int userId, string firstname = null, string lastname = null, string password = null)
+        public async Task<SystemResponse> UpdateUserAsync(int userId, string firstname = null, string lastname = null, string password = null)
         {
             var userToUpdate = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (userToUpdate == null) return "User specified doesn't exist in database";
+            if (userToUpdate == null) return SystemResponse.NotFound;
 
             userToUpdate.FirstName = string.IsNullOrEmpty(firstname) ? userToUpdate.FirstName : firstname;
             userToUpdate.LastName = string.IsNullOrEmpty(lastname) ? userToUpdate.LastName : lastname;
@@ -82,7 +82,7 @@ namespace IntraWebApi.Data.Repositories
             }
              
             await _context.SaveChangesAsync();
-            return "User informations is updated successfuly.";
+            return SystemResponse.Success;
         }
     }
 }

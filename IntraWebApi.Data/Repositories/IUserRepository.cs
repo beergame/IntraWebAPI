@@ -9,11 +9,11 @@ namespace IntraWebApi.Data.Repositories
 {
     public interface IUserRepository
     {
-        Task<string> CreateUserAsync(UserRegister user);
+        Task<SystemResponse> CreateUserAsync(UserRegister user);
         Task<User> GetUserAsync(string username, string password);
         Task<UserCredentials> GetUserCredentialsAsync(int userId);
 
-        Task<string> UpdateUserAsync(int userId, string firstname = null, string lastname = null,
+        Task<SystemResponse> UpdateUserAsync(int userId, string firstname = null, string lastname = null,
             string password = null);
     }
 }
