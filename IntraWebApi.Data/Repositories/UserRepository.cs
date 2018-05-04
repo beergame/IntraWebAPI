@@ -3,7 +3,6 @@ using IntraWebApi.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Data.Edm.Csdl;
 
 namespace IntraWebApi.Data.Repositories
 {
