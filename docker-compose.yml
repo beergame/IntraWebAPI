@@ -6,3 +6,12 @@ services:
     build:
       context: .
       dockerfile: IntraWebApi/Dockerfile
+
+  intrawebsql:
+    image: microsoft/mssql-server-linux:2017-latest
+    environment:
+      - "ACCEPT_EULA=Y"
+      - "MSSQL_SA_PASSWORD=ad6hPOldZ"
+    ports:
+      - 1401:1433
+    hostname: intrawebsql
