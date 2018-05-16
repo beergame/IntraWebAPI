@@ -70,5 +70,24 @@ namespace IntraWebApi.Controllers
                     return Ok();
             }
         }
+
+        [HttpGet("getUser")]
+        public async Task<IActionResult> getUserByName()
+        {
+            var headers = Request.Headers;
+            string accessToken = null;
+
+            var tokenIsFound = headers.TryGetValue("access_token", out var values);
+            if (tokenIsFound)
+                accessToken = values.FirstOrDefault();
+
+            var result = await _userService.getUserByNameAsync(accessToken);
+
+            if (result == null) {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
     }
 }

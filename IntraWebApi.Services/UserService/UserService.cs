@@ -8,6 +8,7 @@ using IntraWebApi.Data.Context;
 using IntraWebApi.Data.Models;
 using IntraWebApi.Data.Repositories;
 using IntraWebApi.Services.TokenProvider;
+using IntraWebApi.Services.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -94,6 +95,24 @@ namespace IntraWebApi.Services.UserService
                 role = AdminRole;
 
             return await _tokenProvider.GenerateTokenAsync(user.Id, userCredentials.Username, role);
+        }
+
+        public async Task<UserModel> getUserByNameAsync(string accessToken)
+        {
+            if (string.IsNullOrEmpty(accessToken)) return null;
+
+            var tokenDecoded = _tokenProvider.DecodeToken(accessToken);
+            var userIdFromDictionary = tokenDecoded.Select(x => x.Key).First();
+            int.TryParse(userIdFromDictionary, out var userId);
+
+            var result = await _userRepository.getUserByIdAsync(userId);
+
+            var user = new UserModel{
+                LastName = result.LastName,
+                FirstName = result.FirstName
+            };
+
+            return user;
         }
     }
 }

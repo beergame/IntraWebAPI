@@ -15,5 +15,6 @@ namespace IntraWebApi.Data.Repositories
 
         Task<SystemResponse> UpdateUserAsync(int userId, string firstname = null, string lastname = null,
             string password = null);
+        Task<User> getUserByIdAsync(int userId);
     }
 }

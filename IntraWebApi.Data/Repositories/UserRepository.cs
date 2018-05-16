@@ -83,5 +83,10 @@ namespace IntraWebApi.Data.Repositories
             await _context.SaveChangesAsync();
             return SystemResponse.Success;
         }
+
+        public async Task<User> getUserByIdAsync(int userId)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        }
     }
 }
