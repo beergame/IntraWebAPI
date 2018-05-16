@@ -54,8 +54,8 @@ namespace IntraWebApi.Controllers
             }
         }
 
-        [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteArticle([FromBody] int articleId)
+		[HttpDelete("delete/{articleId}")]
+        public async Task<IActionResult> DeleteArticle(int articleId)
         {
             var accessToken = GetAccessTokenFormHeaders();
             var result = await _articleService.DeleteArticleAsync(articleId, accessToken);
