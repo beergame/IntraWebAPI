@@ -74,5 +74,10 @@ namespace IntraWebApi.Services.ArticleService
         {
             return await _articleRepository.GetAllArticlesAsync();
         }
-    }
+
+		public async Task<Article> GetArticleByIdAsync(int articleId)
+		{
+			return await _articleRepository.GetArticleByIdAsync(articleId);
+		}
+	}
 }

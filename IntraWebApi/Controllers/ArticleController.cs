@@ -70,6 +70,15 @@ namespace IntraWebApi.Controllers
             }
         }
 
+		[HttpGet("getById/{id}")]
+		public async Task<IActionResult> GetById(int id)
+		{
+			var result = await _articleService.GetArticleByIdAsync(id);
+			if (result != null)
+				return Ok(result);
+			return NotFound(id);
+		}
+
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAllArticles([FromQuery] PagingParameter pagingParameter)
         {

@@ -13,5 +13,6 @@ namespace IntraWebApi.Data.Repositories
         Task<SystemResponse> UpdateAsync(int articleId, int userId, string title = null, string content = null, byte[] picture = null);
         Task<SystemResponse> DeleteAsync(int articleId, int userId);
         Task<IEnumerable<Article>> GetAllArticlesAsync();
+		Task<Article> GetArticleByIdAsync(int articleId);
     }
 }

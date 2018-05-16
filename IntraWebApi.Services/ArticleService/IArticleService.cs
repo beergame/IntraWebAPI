@@ -13,5 +13,6 @@ namespace IntraWebApi.Services.ArticleService
         Task<SystemResponse> UpdateArticleAsync(int articleId, string accessToken, string title = null, string content = null, byte[] picture = null);
         Task<SystemResponse> DeleteArticleAsync(int articleId, string accessToken);
         Task<IEnumerable<Article>> GetallArticlesAsync();
+		Task<Article> GetArticleByIdAsync(int articleId);
     }
 }
