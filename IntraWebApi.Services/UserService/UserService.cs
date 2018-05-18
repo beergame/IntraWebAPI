@@ -94,7 +94,7 @@ namespace IntraWebApi.Services.UserService
             if (userCredentials.IsAdmin)
                 role = AdminRole;
 
-            return await _tokenProvider.GenerateTokenAsync(user.Id, userCredentials.Username, role);
+			return await _tokenProvider.GenerateTokenAsync(user.Id, userCredentials.Username, role, userCredentials.IsAdmin);
         }
 
         public async Task<UserModel> getUserByNameAsync(string accessToken)

@@ -7,7 +7,7 @@ namespace IntraWebApi.Services.TokenProvider
 {
     public interface ITokenProvider
     {
-        Task<Token> GenerateTokenAsync(int userId, string username, string role);
+        Task<Token> GenerateTokenAsync(int userId, string username, string role, bool isAdmin);
         Dictionary<string, string> DecodeToken(string accessToken);
     }
 }

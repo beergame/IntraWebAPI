@@ -20,7 +20,7 @@ namespace IntraWebApi.Services.TokenProvider
             ThrowIfInvalidOptions(_options);
         }
 
-        public async Task<Token> GenerateTokenAsync(int userId, string username, string role)
+        public async Task<Token> GenerateTokenAsync(int userId, string username, string role, bool isAdmin)
         {
             var now = DateTime.UtcNow;
 
@@ -49,7 +49,8 @@ namespace IntraWebApi.Services.TokenProvider
             var response = new Token
             {
                 AccessToken = encodedJwt,
-                ExpireIn = (int)_options.Expiration.TotalSeconds
+                ExpireIn = (int)_options.Expiration.TotalSeconds,
+				IsAdmin = isAdmin
             };
 
             return response;
