@@ -73,7 +73,7 @@ namespace IntraWebApi.Controllers
 		[HttpGet("getById/{id}")]
 		public async Task<IActionResult> GetById(int id)
 		{
-			var result = await _articleService.GetArticleByIdAsync(id);
+            var result = await _articleService.GetArticleByIdAsync(id);
 			if (result != null)
 				return Ok(result);
 			return NotFound(id);

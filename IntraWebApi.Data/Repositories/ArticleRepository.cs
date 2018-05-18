@@ -57,12 +57,6 @@ namespace IntraWebApi.Data.Repositories
                             select article).AsQueryable();
             return  await articles.ToListAsync();
         }
-        
-		public async Task<Article> GetArticleByIdAsync(int articleId)
-		{
-			return await _context.Articles.FirstOrDefaultAsync(a => a.Id == articleId);
-		}
-
 		public async Task<SystemResponse> UpdateAsync(int articleId, int userId, string title = null, string content = null, byte[] picture = null)
         {
             var userAccessRight = await _context.UserAccessRights.FirstOrDefaultAsync(u => u.UserId == userId);
@@ -78,6 +72,11 @@ namespace IntraWebApi.Data.Repositories
             article.Picture = picture ?? article.Picture;
             await _context.SaveChangesAsync();
             return SystemResponse.Success;
+        }
+
+        public async Task<Article> GetArticleByIdAsync(int articleId)
+        {
+            return await _context.Articles.FirstOrDefaultAsync(a => a.Id == articleId);
         }
     }
 }
