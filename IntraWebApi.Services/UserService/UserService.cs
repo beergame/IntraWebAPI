@@ -89,12 +89,16 @@ namespace IntraWebApi.Services.UserService
         public async Task<Token> Authenticate(string username, string password)
         {
             var user = GetUser(username, password).Result;
-            var userCredentials = GetUserCredentials(user.Id).Result;
-            var role = UserRole;
-            if (userCredentials.IsAdmin)
-                role = AdminRole;
+            if (user != null) {
+                var userCredentials = GetUserCredentials(user.Id).Result;
+                var role = UserRole;
+                if (userCredentials.IsAdmin)
+                    role = AdminRole;
 
-			return await _tokenProvider.GenerateTokenAsync(user.Id, userCredentials.Username, role, userCredentials.IsAdmin);
+			    return await _tokenProvider.GenerateTokenAsync(user.Id, userCredentials.Username, role, userCredentials.IsAdmin);
+            }
+
+            return null;
         }
 
         public async Task<UserModel> getUserByNameAsync(string accessToken)

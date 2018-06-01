@@ -55,9 +55,11 @@ namespace IntraWebApi.Data.Repositories
             var userCredentialsQuery = from u in _context.UserCredentials
                 where u.Username == username && u.Password == password
                 select u;
-            var userCredentials = await userCredentialsQuery.FirstAsync();
-            if (userCredentials != null)
-                return await _context.Users.FirstOrDefaultAsync(u => u.Id == userCredentials.UserId);
+            if (userCredentialsQuery.Count() != 0) {
+                var userCredentials = await userCredentialsQuery.FirstAsync();
+                if (userCredentials != null)
+                    return await _context.Users.FirstOrDefaultAsync(u => u.Id == userCredentials.UserId);
+            }
             return null;
         }
 
