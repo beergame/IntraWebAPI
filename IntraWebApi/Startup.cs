@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace IntraWebApi
 {
@@ -24,6 +25,10 @@ namespace IntraWebApi
         {
             services.AddMvc();
             services.AddCors();
+            services.AddSwaggerGen(c =>
+            {
+               c.SwaggerDoc("v1", new Info { Title = "IntraWebApi", Version = "v1" });
+            });
 
             var connection = Configuration["ConnectionString"];
 
@@ -44,6 +49,10 @@ namespace IntraWebApi
                 app.UseDeveloperExceptionPage();
             }
             app.UseMvc();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
         }
     }
 }
